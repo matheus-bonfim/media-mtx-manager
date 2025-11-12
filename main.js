@@ -31,8 +31,11 @@ export async function getAllContainers(agingTime, streams_lst){
        
         let timestamp = new Date(data.Created).getTime();
         if (time - timestamp > agingTime){
-          await removeStream(conName);    // se o watcher tiver usando a stream principal mantem ela e so remove a stream de visualizacao
-          if(streams_lst.includes(conName)) con_lst.push(conName);
+              
+          if(streams_lst.includes(conName)){
+            await removeStream(conName);
+            con_lst.push(conName);
+          } 
         }
       }
     }
