@@ -3,7 +3,7 @@ import { getAvailableUdpPort } from './udpPorts.js';
 import fs from 'fs';
 import path from 'path';
 import Docker from 'dockerode';
-import { IP_PUBLICO_SERVER, con_config_path } from './config.js';
+import { con_config_path, IP_PUBLIC } from './config.js';
 
 
 
@@ -11,11 +11,14 @@ import { IP_PUBLICO_SERVER, con_config_path } from './config.js';
 
 
 export async function getPorts() {
-    const rtspAddress = await getPort({port: portNumbers(8554, 8564)});
+    const rtspAddress = await getPort({port: portNumbers(9554, 9564)});
+    const webrtcAddress = await getPort({port: portNumbers(9031, 9041)});
+    const webrtcLocalUDPAddress = await getAvailableUdpPort({portRange: [9042, 9052]});
+    //const udpPort1 = await getAvailableUdpPort({portRange:})
     let pair_is_set = false;
-    let rtpAddress=8000; 
+    let rtpAddress=8010; 
     let rtcpAddress;
-    const max_rtpAddress = 8020;
+    const max_rtpAddress = 8030;
     let noPorts = false;
 
 
@@ -40,6 +43,8 @@ export async function getPorts() {
     }
     else{
         const ports = {
+            webrtcAddress: webrtcAddress,
+            webrtcLocalUDPAddress: webrtcLocalUDPAddress,
             rtspAddress: rtspAddress, 
             rtpAddress: rtpAddress, 
             rtcpAddress: rtcpAddress,
@@ -50,8 +55,53 @@ export async function getPorts() {
 }
 
 
+// export async function getPorts() {
+//     const rtspAddress = await getPort({port: portNumbers(9554, 9564)});
+//     const webrtcAddress = await getPort({port: portNumbers(9031, 9041)});
+//     //const webrtcLocalUDPAddress = await getAvailableUdpPort({portRange: [9042, 9052]});
+//     //const udpPort1 = await getAvailableUdpPort({portRange:})
+//     let pair_is_set = false;
+//     let udpAddress=9042; 
+//     let udpAddress2;
+//     const max_udpAddress = 9052;
+//     const udpInterval = 2;
+//     let noPorts = false;
 
-export function createYml(name, ip, ports, tipo){
+
+//     while(!pair_is_set && !noPorts){
+//         //rtpAddress = await getPort({port: portNumbers(rtpAddress, max_rtpAddress)});
+//         udpAddress = await getAvailableUdpPort({portRange: [udpAddress, max_udpAddress]})
+//         if(!udpAddress){ //se nao encontrar porta para
+//             noPorts = true;
+//             break;
+//         }
+//         udpAddress2 = await getAvailableUdpPort({portRange: [udpAddress + 1, udpAddress + 2]})
+//         if(!udpAddress2){
+//             udpAddress += 2;
+//         }
+//         else pair_is_set = true;
+//         if(udpAddress > max_udpAddress - 1){
+//             noPorts = true;
+//         }
+//     }
+//     if(noPorts){
+//         return false;
+//     }
+//     else{
+        
+//         const ports = {
+//             webrtcAddress: webrtcAddress,
+//             rtspAddress: rtspAddress, 
+//             udpAddress: udpAddress, 
+//             udpAddress2: udpAddress2,
+//         }
+       
+//         return ports;
+//     }
+// }
+
+
+export function createYml(name, url_source, ports){
 
     try{
         fs.copyFileSync(path.join(con_config_path, 'default.yml'), path.join(con_config_path, `${name}.yml`));
@@ -60,32 +110,10 @@ export function createYml(name, ip, ports, tipo){
         console.log("Erro ao copiar default", err);
         return false;
     }
-    let psw, url_source;
-    if(tipo === 'DVR'){
-        let stream_number = name.split('_')[1];
-        psw = "wnidobrasil22";
-        //url_source = `source: rtsp://mat:wnidobrasil22@${ip}:554/Streaming/Channels/${stream_number}`;
-        url_source = `rtsp://mat:wnidobrasil22@${ip}:554`;
-        //source: rtsp://admin:${psw}@${ip}
-    }
-    else if (tipo === 'LPR'){
-        psw = encodeURIComponent("Wnidobrasil#22")
-        url_source = `rtsp://admin:${psw}@${ip}:554/cam/realmonitor?channel=1&subtype=1`;
-        console.log("LPR URL:", url_source);
-    }
-    else{
-        //psw = encodeURIComponent("Wnidobrasil#22")
-        psw = encodeURIComponent("Wnidobrasil!20");
-        url_source = `rtsp://bosch:${psw}@${ip}:25552`;
-        //url_source = `source: rtsp://admin:${psw}@${ip}:554/media/video3`;
-    }
-    let url_source_dest = `rtsp://admin:${psw}@${IP_PUBLICO_SERVER}:${ports.rtspAddress}/${name}`
-    let runOnReady = `ffmpeg -i ${url_source} -f rtsp ${url_source_dest}`;
 
-    const content = `\nrtspAddress: :${ports.rtspAddress}\nrtpAddress: :${ports.rtpAddress}\nrtcpAddress: :${ports.rtcpAddress}\npaths:\n  ${name}:\n    source: ${url_source}\n    sourceOnDemand: yes`;  
+    //webrtcICEUDPRange: 9043-9053
+    const content = `\nwebrtcAddress: :${ports.webrtcAddress}\nwebrtcLocalUDPAddress: :${ports.webrtcLocalUDPAddress}\nrtspAddress: :${ports.rtspAddress}\nrtpAddress: :${ports.rtpAddress}\nrtcpAddress: :${ports.rtcpAddress}\nwebrtcAdditionalHosts: [ "${IP_PUBLIC}" ]\npaths:\n  ${name}:\n    source: ${url_source}\n    sourceProtocol: tcp\n    sourceOnDemand: yes`;  
     
-    //console.log(url_source_dest);
-
     try {
         const fileName = path.join(con_config_path,`${name}.yml` );
         fs.appendFileSync(fileName, content);

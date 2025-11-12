@@ -509,3 +509,14 @@ rtmp: no
 #rtcpAddress: :8001 ##8001 original
 # IP range of all UDP-multicast listeners. This is needed only when "multicast" is in rtspTransports.
 ##RTP and RTCP ports must be consecutive //  bom lembrar  
+webrtcAddress: :9033
+webrtcLocalUDPAddress: :9044
+rtspAddress: :9556
+rtpAddress: :8014
+rtcpAddress: :8015
+webrtcAdditionalHosts: [ "189.4.2.61" ]
+paths:
+  43.2_CXT:
+    source: rtsp://192.168.10.226:8560/43.2_CXT
+    sourceProtocol: tcp
+    sourceOnDemand: yes

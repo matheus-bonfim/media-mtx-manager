@@ -2,9 +2,9 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 
-export const containerAgingTime = 3600;
+export const containerAgingTime = 1000 * 1800;
 export const cleanerIntervalTime = 1000 * 60 * 20;
-export const IP_PUBLICO_SERVER = '189.4.2.61';
+
 
 export const con_config_path = './containers_config';
 
@@ -12,4 +12,7 @@ const __filename = fileURLToPath(import.meta.url);
 
 export const __dirname = path.dirname(__filename);
 
-export const IP = "192.168.10.226";
+export const IP = "192.168.10.237";
+//export const IP_PUBLIC = "189.4.2.61";
+export const IP_PUBLIC = "189.4.2.61";
+export const HTTP_PORT = 3333;

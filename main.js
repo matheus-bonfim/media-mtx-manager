@@ -3,6 +3,7 @@ import { createYml, getPorts } from './functions.js';
 import fs, { readFileSync, writeFileSync } from 'fs';
 import path from 'path';
 import { __dirname, IP } from './config.js';
+import { url } from 'inspector';
 
 
 export const ports_path = './ports.json';
@@ -11,29 +12,40 @@ export const con_config_path = './containers_config';
 
 const docker = new Docker(); // Conectar com o Docker local
 
-export async function getAllContainers(agingTime){
-  const time = Date.now() 
+export async function getAllContainers(agingTime, streams_lst){
+  const time = Date.now();
+  let con_lst = []; 
   try{
     let containers = await docker.listContainers({ all: true });
     for (let container of containers){
       let conObj = docker.getContainer(container.Id);
       let data = await conObj.inspect();
       let conName = data.Name.replace('/', '');
+      
+      
       if (container.State !== 'running'){
         await removeStream(conName);
+        con_lst.push(conName);
       }
       else{
+       
         let timestamp = new Date(data.Created).getTime();
         if (time - timestamp > agingTime){
-          await removeStream(conName);
+          await removeStream(conName);    // se o watcher tiver usando a stream principal mantem ela e so remove a stream de visualizacao
+          if(streams_lst.includes(conName)) con_lst.push(conName);
         }
       }
     }
+    return con_lst;
   }
+  
   catch (error) {
     console.log(error);
+    return [];
   }
 }
+
+
 // Função para verificar se o container já está rodando
 async function checkContainerRunning(containerName) {
   try {
@@ -62,11 +74,11 @@ async function checkContainerRunning(containerName) {
 }
 
 // Função para criar e iniciar um novo container
-async function createAndStartContainer(containerName, ip, tipo) {
+async function createAndStartContainer(containerName, url_source) {
 
     const ports = await getPorts();
     if(ports){
-      const file_yml = createYml(containerName, ip, ports, tipo);
+      const file_yml = createYml(containerName, url_source, ports);
       if (file_yml){
           try {
               const container = await docker.createContainer({
@@ -88,7 +100,8 @@ async function createAndStartContainer(containerName, ip, tipo) {
               console.log(ports);
 
               const url_rtsp = `rtsp://${IP}:${ports.rtspAddress}/${containerName};`
-
+              console.log(`URL RTSP: ${url_rtsp}`);
+              
 
               return ports;
 
@@ -101,19 +114,27 @@ async function createAndStartContainer(containerName, ip, tipo) {
       }
     }
     else{
-      console.log("Sem portas disponíveis")
-    }
-}
+      console.log("Sem portas disponíveis");
+      console.log("Removendo container antigo");
+      const deleted = await deleteOlderContainer();
+      if(deleted){
+        return await createAndStartContainer(containerName, url_source); // Tenta criar novamente após deletar o container antigo
+      }
+      else{
+        console.log("Erro ao deletar container antigo");
+        return undefined;
+      }
+}};
 
 // Função principal que gerencia a criação do container quando solicitado
-export async function handleRequest(containerName, ip, tipo) { //retorna as portas ou undefined em caso de erro
+export async function handleRequest(containerName, url_source) { //retorna as portas ou undefined em caso de erro
   console.log("container name:",containerName);
-  console.log("ip ", ip);
+  
   // Verificar se o container já está rodando
   const ports = await checkContainerRunning(containerName); // se tiver rodando, retorna as portas, else retorna false
   if (!ports) {
-    console.log(`Iniciando container para a câmera ${ip}`);
-    return await createAndStartContainer(containerName, ip, tipo);
+    console.log(`Iniciando container para a câmera ${containerName}`);
+    return await createAndStartContainer(containerName, url_source);
   } else {
     console.log(`Container para a câmera ${containerName} já está rodando.`);
     console.log(ports);
@@ -146,6 +167,35 @@ export async function removeStream(cam){
     else{
         console.log("Container nao encontrado!")
     }
+    return;
+}
+
+export async function deleteOlderContainer(){ 
+  try{
+    let containers = await docker.listContainers({ all: true });
+    
+    let prev_container_info = {name: '', timestamp: 0};
+    for (let container of containers){
+      let conObj = docker.getContainer(container.Id);
+      let data = await conObj.inspect();
+      let conName = data.Name.replace('/', '');
+      if (container.State !== 'running'){
+        await removeStream(conName);
+      }
+      else{
+        let timestamp = new Date(data.Created).getTime();
+        if (timestamp > prev_container_info.timestamp){
+          prev_container_info.name = conName;
+          prev_container_info.timestamp = timestamp;
+        }
+      }
+    }
+    await removeStream(prev_container_info.name);
+    return true;
+  }
+  catch (error) {
+    console.log(error);
+  }
 }
 
 export async function listActiveContainers(){
@@ -153,29 +203,10 @@ export async function listActiveContainers(){
   const conNames = containers.map(con => con.Names[0].replace(/^\//, ''));
   return conNames;
 }
-//handleRequest('cam1', '172.16.0.181:554')
 
-//removeStream('43.3_CXT')
-//removeStream('ch2')
+//createAndStartContainer('9.2_LPR', 'rtsp://192.168.10.226:8555/9.2_LPR');
 
+//rtsp://192.168.10.226:8554/9.2_LPR
 
-//createAndStartContainer('7.3_LPR', '192.168.2.23', 'LPR');
-
-
-
-//'192.168.24.29:554'
-// Teste: ao chamar essa função, um container será criado se a câmera não estiver sendo transmitida
-//handleRequest('cam3', '192.168.24.29:554');    portao do parque 
-//handleRequest('cam2', '192.168.24.37:554');
-//handleRequest('cam4', '172.16.0.180:554')
-
-//handleRequest('cam4', '172.16.0.180:554')
-
-//handleRequest('cam1', '172.16.0.181:554');
-
-
-
-///preciso fazer um gerenciador de containers ativosossssosossososososososos
-
-
-//rtsp://admin:Wnidobrasil%2322@192.168.10.226:8554/cam/realmonitor?channel=1&subtype=1
+//removeStream('46.1_LPR');
+//getAllContainers(10, []);

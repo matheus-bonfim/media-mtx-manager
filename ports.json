@@ -1,3 +1,114 @@
 {
-
+  "43.2_CXT": {
+    "webrtcAddress": 9033,
+    "webrtcLocalUDPAddress": 9044,
+    "rtspAddress": 9556,
+    "rtpAddress": 8014,
+    "rtcpAddress": 8015
+  },
+  "03_CXT": {
+    "webrtcAddress": 9031,
+    "webrtcLocalUDPAddress": 9042,
+    "rtspAddress": 9554,
+    "rtpAddress": 8010,
+    "rtcpAddress": 8011
+  },
+  "23.2_CXT": {
+    "webrtcAddress": 9035,
+    "webrtcLocalUDPAddress": 9046,
+    "rtspAddress": 9558,
+    "rtpAddress": 8018,
+    "rtcpAddress": 8019
+  },
+  "05_CXT": {
+    "webrtcAddress": 9036,
+    "webrtcLocalUDPAddress": 9047,
+    "rtspAddress": 9559,
+    "rtpAddress": 8020,
+    "rtcpAddress": 8021
+  },
+  "H1.1_LPR": {
+    "webrtcAddress": 9037,
+    "webrtcLocalUDPAddress": 9048,
+    "rtspAddress": 9560,
+    "rtpAddress": 8022,
+    "rtcpAddress": 8023
+  },
+  "6.2_LPR": {
+    "webrtcAddress": 9031,
+    "webrtcLocalUDPAddress": 9042,
+    "rtspAddress": 9554,
+    "rtpAddress": 8010,
+    "rtcpAddress": 8011
+  },
+  "1GA_LPR": {
+    "webrtcAddress": 9039,
+    "webrtcLocalUDPAddress": 9050,
+    "rtspAddress": 9562,
+    "rtpAddress": 8026,
+    "rtcpAddress": 8027
+  },
+  "04_CXT": {
+    "webrtcAddress": 9032,
+    "webrtcLocalUDPAddress": 9045,
+    "rtspAddress": 9555,
+    "rtpAddress": 8016,
+    "rtcpAddress": 8017
+  },
+  "16_CXT": {
+    "webrtcAddress": 9035,
+    "webrtcLocalUDPAddress": 9046,
+    "rtspAddress": 9558,
+    "rtpAddress": 8018,
+    "rtcpAddress": 8019
+  },
+  "27_CXT": {
+    "webrtcAddress": 9036,
+    "webrtcLocalUDPAddress": 9047,
+    "rtspAddress": 9559,
+    "rtpAddress": 8020,
+    "rtcpAddress": 8021
+  },
+  "45.1_LPR": {
+    "webrtcAddress": 9034,
+    "webrtcLocalUDPAddress": 9046,
+    "rtspAddress": 9557,
+    "rtpAddress": 8018,
+    "rtcpAddress": 8019
+  },
+  "31B_LPR": {
+    "webrtcAddress": 9036,
+    "webrtcLocalUDPAddress": 9047,
+    "rtspAddress": 9559,
+    "rtpAddress": 8020,
+    "rtcpAddress": 8021
+  },
+  "29B_LPR": {
+    "webrtcAddress": 9037,
+    "webrtcLocalUDPAddress": 9048,
+    "rtspAddress": 9560,
+    "rtpAddress": 8022,
+    "rtcpAddress": 8023
+  },
+  "32.2B_CXT": {
+    "webrtcAddress": 9038,
+    "webrtcLocalUDPAddress": 9049,
+    "rtspAddress": 9561,
+    "rtpAddress": 8024,
+    "rtcpAddress": 8025
+  },
+  "43.1_CXT": {
+    "webrtcAddress": 9032,
+    "webrtcLocalUDPAddress": 9043,
+    "rtspAddress": 9555,
+    "rtpAddress": 8012,
+    "rtcpAddress": 8013
+  },
+  "38.2_CXT": {
+    "webrtcAddress": 9031,
+    "webrtcLocalUDPAddress": 9042,
+    "rtspAddress": 9554,
+    "rtpAddress": 8010,
+    "rtcpAddress": 8011
+  }
 }
