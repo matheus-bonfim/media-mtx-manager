@@ -45,8 +45,8 @@ export function createServer(){
 
     app.get('/api/removeOlderStreams', async (req, res) => {
         const agingTime = req.query.agingTime;
-        const streams_lst = req.query['streams_lst[]'];
-        const con_lst = await getAllContainers(agingTime);
+        const notWatchedStreams = req.query['streams_lst[]'];
+        const con_lst = await getAllContainers(agingTime, notWatchedStreams);
         res.status(200).json({
             con_lst: con_lst
         })

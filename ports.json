@@ -1,11 +1,4 @@
 {
-  "43.2_CXT": {
-    "webrtcAddress": 9033,
-    "webrtcLocalUDPAddress": 9044,
-    "rtspAddress": 9556,
-    "rtpAddress": 8014,
-    "rtcpAddress": 8015
-  },
   "03_CXT": {
     "webrtcAddress": 9031,
     "webrtcLocalUDPAddress": 9042,
@@ -96,19 +89,5 @@
     "rtspAddress": 9561,
     "rtpAddress": 8024,
     "rtcpAddress": 8025
-  },
-  "43.1_CXT": {
-    "webrtcAddress": 9032,
-    "webrtcLocalUDPAddress": 9043,
-    "rtspAddress": 9555,
-    "rtpAddress": 8012,
-    "rtcpAddress": 8013
-  },
-  "38.2_CXT": {
-    "webrtcAddress": 9031,
-    "webrtcLocalUDPAddress": 9042,
-    "rtspAddress": 9554,
-    "rtpAddress": 8010,
-    "rtcpAddress": 8011
   }
 }
